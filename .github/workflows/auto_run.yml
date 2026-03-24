@@ -1,0 +1,25 @@
+name: AutoRunTradeStrategy
+on:
+  schedule:
+    - cron: '45 1 * * 1-5'  # 周一到周五 1:45 UTC = 北京时间 9:45
+  workflow_dispatch:        # 允许手动触发测试（关键）
+
+jobs:
+  run-strategy:
+    runs-on: ubuntu-latest  # 使用免费的Ubuntu运行环境
+    steps:
+      - name: 拉取仓库代码
+        uses: actions/checkout@v4
+
+      - name: 配置Python 3.9环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: 安装依赖包（聚宽SDK + 网络请求）
+        run: |
+          python -m pip install --upgrade pip
+          pip install jqdatasdk requests
+
+      - name: 执行策略脚本
+        run: python trade.py
